@@ -1,0 +1,51 @@
+# Model arguments
+model_name_or_path: microsoft/Phi-4-mini-instruct
+model_revision: main
+torch_dtype: bfloat16
+trust_remote_code: True
+attn_implementation: flash_attention_2  #sdpa
+
+# Data training arguments
+dataset_mixer:
+  "/home/ubuntu/poria-cvpr-2026/Tej/CVPR_PRM/src/policy_training/data/prm800k_pref_data/listwise_data_chat_with_labels_4negs_phi4_mini": 1.0
+dataset_splits:
+  - train
+  - test
+preprocessing_num_workers: 1
+truncation_side: "left"
+
+# DPOTrainer arguments
+output_dir: ./trained_models/Phi-4-mini-prm800k-mini-sdpo
+num_train_epochs: 1
+bf16: true
+beta: 0.1
+per_device_train_batch_size: 4
+per_device_eval_batch_size: 4
+gradient_accumulation_steps: 16  
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: False
+learning_rate: 5.0e-7
+log_level: info
+logging_steps: 2
+logging_strategy: steps
+optim: adamw_torch  # adamw_torch_fused
+lr_scheduler_type: cosine
+max_length: 16192
+max_prompt_length: 1600
+overwrite_output_dir: true
+remove_unused_columns: true
+do_eval: true
+eval_strategy: steps
+eval_steps: 10
+run_name: Phi-4-mini-prm800k-mini-sdpo # modelname-size-sft/dpo convention
+report_to:
+  - wandb
+save_strategy: "steps"
+save_steps: 10
+save_only_model: True
+save_total_limit: 20
+seed: 42
+warmup_ratio: 0.1
+loss_type: 
+- sdpo
